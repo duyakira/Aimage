@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>RealCUGAN Upscale</title>
+    <style>
+  
+        .h1 {  
+            background-color: #e9d8f4;  
+            color: #0d0811;  
+            text-align: center;  
+            font-family: Arial;
+            text-align: center;
+            height: 100px;
+            font-size: 50px;
+            padding-top: 25px;
+        }
+        title {
+            background-color: #4187ff;
+            color :#4187ff
+        }
+
+        p{
+            background-color: #e9d8f4;
+        }
+        .imageAlign{    
+background: yellow;    
+height: fit-content;    
+width: fit-content;    
+border: solid 1px red; 
+border-radius: 10px;
+padding : 30px;       
+
+}
+         
+        body {
+             font-family: Arial;
+             background-image: url("output_cv2.jpg");
+             text-align: center;
+       
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center; /* centers the image in the viewport */
+  min-height: 100vh; /* ensures the body covers the full height of the screen */
+  margin: 0; /* removes default body margin */
+        }
+        
+        
+       
+       
+        button {
+    align-self: flex-end;
+    background: #111827;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
+}
+        button:hover:not(:disabled) {
+    background: #1f2937;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+        button:active:not(:disabled) {
+    transform: scale(0.98);
+    background-color: #ff0000;
+    transition: 0.2s ;
+}
+
+        button:disabled {
+    background: #000000;
+    cursor: not-allowed;
+    animation: fadeIn 0.4s ease;
+}
+        a{
+          color :#ffffff
+        }
+        a:active:not(:disabled){
+          color: #ff0000;
+        }
+        a:disabled{
+          color: #ffffff;
+        }
+.dropdown { position: relative; display: inline-block; }
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: #222;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.dropdown-content button {
+  display: block;
+  margin: 5px 0;
+  width: 100%;
+}
+
+
+        input[type = 'file']::file-selector-button {
+          align-self: flex-end;
+          background: #111827;
+          color: #ffffff;
+          border: none;
+          border-radius: 8px;
+          padding: 10px 20px;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition:
+           background 0.2s ease,
+           transform 0.15s ease,
+           box-shadow 0.15s ease;
+        }
+         input[type = 'file']::file-selector-button:hover:not(:disabled) {
+    background: #1f2937;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+        input[type = 'file']::file-selector-button:active:not(:disabled) {
+    transform: scale(0.98);
+    background-color: #ff0000;
+    transition: 0.2s ;
+}
+
+        input[type = 'file']::file-selector-button:disabled {
+    background: #4187ff;
+    cursor: not-allowed;
+}
+    * {
+    box-sizing: border-box;
+}
+
+    </style>
+</head>
+<body>
+    <div class = "h1">AI Image Upscaler</div>
+    <p>Professional AI-powered image enhancement</p>
+
+
+</script>
+
+<div class = "imageAlign">
+    <h1>Images</h1>
+
+    <input type="file" id="file">
+
+    <div class="dropdown">
+    <button onclick="upscale2x()">Upscale2x</button>
+    <div id="menu" class="dropdown-content">
+    <button onclick="upload2xnoise()">2x + noise</button>
+    <button onclick="upload2x()">2x</button>
+    <button onclick="upload2xsharp()">2x sharpen</button>
+    </div>
+    </div>
+
+    <script>
+    function upscale2x() {
+    const menu = document.getElementById("menu");
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    }
+    </script>
+
+
+    <div class="dropdown">
+    <button onclick="upscale3x()">Upscale3x</button>
+    <div id="menu2" class="dropdown-content">
+    <button onclick="upload3xnoise()">3x noise</button>
+    <button onclick="upload3x()">3x</button>
+    <button onclick="upload3xsharp()">3x sharpen</button>
+    </div>
+    </div>
+
+    <script>
+    function upscale3x() {
+    const menu = document.getElementById("menu2");
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    }
+    </script>
+
+    
+    <div class="dropdown">
+    <button onclick="upscale4x()">Upscale4x</button>
+    <div id="menu3" class="dropdown-content">
+    <button onclick="upload4x()">4x + noise</button>
+    <button onclick="upload4xnoise()">4x</button>
+    <button onclick="upload4xsharp()">4x sharpen</button>
+    </div>
+    </div>
+
+    <script>
+    function upscale4x() {
+    const menu = document.getElementById("menu3");
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    }
+    </script>
+    
+    <br></br>
+
+    <script>
+        async function upload2x() {
+            const fileInput = document.getElementById("file");
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            const res = await fetch("/api/upscale2x", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+
+            const img = document.getElementById("result");
+            img.src = data.result;
+            
+            
+            const link = document.getElementById("downloadLink");
+                  link.href = data.result + "?t=" + Date.now(); // chống cache
+                  link.download = "upscaled.png";
+                  link.style.display = "inline-block";
+        }
+
+        async function upload2xnoise() {
+            const fileInput = document.getElementById("file");
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            const res = await fetch("/api/upscale2xnoise", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+
+            const img = document.getElementById("result");
+            img.src = data.result;
+            
+            
+            const link = document.getElementById("downloadLink");
+                  link.href = data.result + "?t=" + Date.now(); // chống cache
+                  link.download = "upscaled.png";
+                  link.style.display = "inline-block";
+        }
+
+         async function upload2xsharp() {
+            const fileInput = document.getElementById("file");
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            const res = await fetch("/api/upscale2xsharp", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+
+            const img = document.getElementById("result");
+            img.src = data.result;
+            
+            
+            const link = document.getElementById("downloadLink");
+                  link.href = data.result + "?t=" + Date.now(); // chống cache
+                  link.download = "upscaled.png";
+                  link.style.display = "inline-block";
+        }
+         
+
+
+
+        async function upload3x() {
+            const fileInput = document.getElementById("file");
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            const res = await fetch("/api/upscale3x", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+
+            const img = document.getElementById("result");
+            img.src = data.result;
+            
+            
+            const link = document.getElementById("downloadLink");
+                  link.href = data.result + "?t=" + Date.now(); // chống cache
+                  link.download = "upscaled.png";
+                  link.style.display = "inline-block";
+        }
+
+        async function upload3xnoise() {
+            const fileInput = document.getElementById("file");
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            const res = await fetch("/api/upscale3xnoise", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+
+            const img = document.getElementById("result");
+            img.src = data.result;
+            
+            
+            const link = document.getElementById("downloadLink");
+                  link.href = data.result + "?t=" + Date.now(); // chống cache
+                  link.download = "upscaled.png";
+                  link.style.display = "inline-block";
+        }
+            async function upload3xsharp() {
+            const fileInput = document.getElementById("file");
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            const res = await fetch("/api/upscale3xsharp", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+
+            const img = document.getElementById("result");
+            img.src = data.result;
+            
+            
+            const link = document.getElementById("downloadLink");
+                  link.href = data.result + "?t=" + Date.now(); // chống cache
+                  link.download = "upscaled.png";
+                  link.style.display = "inline-block";
+        }
+
+
+        async function upload4x() {
+            const fileInput = document.getElementById("file");
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            const res = await fetch("/api/upscale4x", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+
+            const img = document.getElementById("result");
+            img.src = data.result;
+            
+            
+            const link = document.getElementById("downloadLink");
+                  link.href = data.result + "?t=" + Date.now(); // chống cache
+                  link.download = "upscaled.png";
+                  link.style.display = "inline-block";
+        }
+
+        async function upload4xnoise() {
+            const fileInput = document.getElementById("file");
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            const res = await fetch("/api/upscale4xnoise", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+
+            const img = document.getElementById("result");
+            img.src = data.result;
+            
+            
+            const link = document.getElementById("downloadLink");
+                  link.href = data.result + "?t=" + Date.now(); // chống cache
+                  link.download = "upscaled.png";
+                  link.style.display = "inline-block";
+        }
+            
+        async function upload4xsharp() {
+            const fileInput = document.getElementById("file");
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            const res = await fetch("/api/upscale4xsharp", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+
+            const img = document.getElementById("result");
+            img.src = data.result;
+            
+            
+            const link = document.getElementById("downloadLink");
+                  link.href = data.result + "?t=" + Date.now(); // chống cache
+                  link.download = "upscaled.png";
+                  link.style.display = "inline-block";
+        }
+        
+    </script>
+
+<a id = "downloadLink" href = link.download download = "result">
+   <img id = "result" src = img.src width= "400" height="225"></img>
+</a>
+
+
+<h2>Video</h2>
+
+<input type="file" id="video2">
+<button onclick="uploadVideo2x()">Upscale2x</button>
+<button onclick="uploadVideo3x()">Upscale2x</button>
+<button onclick="uploadVideo4x()">Upscale4x</button>
+
+<p id="status"></p>
+
+
+<script>
+async function uploadVideo2x() {
+    const fileInput = document.getElementById("video2");
+    const video = document.getElementById("videoResult");
+    const status = document.getElementById("status");
+    
+    if (!fileInput.files.length) {
+        alert("Chưa chọn video");
+        return;
+    }
+
+    video.pause();
+    video.src = ""
+    video.removeAttribute("src");
+    video.load();
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    status.innerText = "⏳ Uploading...";
+
+    const res = await fetch("/api/upscaleVideo2x", {
+        method: "POST",
+        body: formData
+    });
+    status.innerText = "⚙️ Processing...";
+
+    const {task_id} = data = await res.json();
+
+    const timer = setInterval(async () => {
+        const r = await fetch(`/api/status/${task_id}`);
+        const s = await r.json();
+        
+
+        if (s.status === "done") {
+            clearInterval(timer);
+            status.innerText = "✅ Done";
+
+            video.src = `/api/download/${task_id}?t=${Date.now()}`;
+            video.load();
+            video.play().catch(() => {});
+        }
+    }, 3000);
+
+    const link = document.getElementById("downloadLinkVideo");
+          link.href = video.src
+          link.download = "upscaled.mp4";
+          link.style.display = "inline-block";
+        }
+</script>
+ 
+
+<script>
+    async function uploadVideo4x() {
+    const fileInput = document.getElementById("video2");
+    const video = document.getElementById("videoResult");
+    const status = document.getElementById("status");
+    
+    if (!fileInput.files.length) {
+        alert("Chưa chọn video");
+        return;
+    }
+
+    video.pause();
+    video.src = ""
+    video.removeAttribute("src");
+    video.load();
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    status.innerText = "⏳ Uploading...";
+
+    const res = await fetch("/api/upscaleVideo4x", {
+        method: "POST",
+        body: formData
+    });
+    status.innerText = "⚙️ Processing...";
+
+    const {task_id} = data = await res.json();
+
+    const timer = setInterval(async () => {
+        const r = await fetch(`/api/status/${task_id}`);
+        const s = await r.json();
+        
+
+        if (s.status === "done") {
+            clearInterval(timer);
+            status.innerText = "✅ Done";
+
+            video.src = `/api/download/${task_id}?t=${Date.now()}`;
+            video.load();
+            video.play().catch(() => {});
+        }
+    }, 3000);
+
+    const link = document.getElementById("downloadLinkVideo");
+          link.href = video.src
+          link.download = "upscaled.mp4";
+          link.style.display = "inline-block";
+        }
+
+</script>
+
+<a id = "downloadLinkVideo" href= link.download download = "result" >
+    <video class = "bg-video" video.src id="videoResult" controls width="400" controls height="225">       
+    </video>
+    </a> 
+
+    <h3>Supporting Tools and Response Link</h3>
+    <button >
+        <a href ="https://imagecompressor.11zon.com/en/compress-jpeg/compress-jpeg-to-100kb">Compress Images</a>
+    </button>
+    <button >
+        <a href="https://www.freeconvert.com/video-compressor">Compress Videos</a>
+    </button>
+    <button >
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdwhAya9bH4d2NyOQwfp5P-oZ-5gs4juY2xNBxsBUuGgyt0LA/viewform?usp=publish-editor">Response Link</a>
+    </button>
+    </script>
+</div>
+</body>
+
+</html>
+
