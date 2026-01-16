@@ -17,23 +17,9 @@ CHUNK = 1024*1024
 BASE_DIR = os.path.dirname(__file__)
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 
-import subprocess
+
 
 FFMPEG_PATH = r"C:\ffmpeg-8.0.1-full_build\bin\ffmpeg.exe"
-
-def convert_video_gpu(input_path, output_path):
-    cmd = [
-        FFMPEG_PATH, "-y",
-        "-i", input_path,
-        "-c:v", "libx264",
-        "-preset", "ultrafast",
-        "-pix_fmt", "yuv420p",
-        "-c:a", "copy",
-        output_path
-    ]
-
-    subprocess.run(cmd, check=True)
-    return output_path
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -317,8 +303,6 @@ async def upscaleVideo(file: UploadFile = File(...)):
     uid = str(uuid.uuid4())
 
     input_path  = os.path.join(UPLOAD_DIR_2, f"{uid}_in.mp4")
-    gpu_path    = os.path.join(UPLOAD_DIR_2, f"{uid}_gpu.mp4")
-    ai_path     = os.path.join(UPLOAD_DIR_2, f"{uid}_ai.mp4")
     output_path = os.path.join(UPLOAD_DIR_2, f"{uid}_out.mp4")
 
     with open(input_path, "wb") as f:
@@ -328,33 +312,17 @@ async def upscaleVideo(file: UploadFile = File(...)):
     task_queue.put((
         upscale_video2x,
         (input_path,
-        gpu_path,
-        ai_path,
         output_path)
     ))
 
     return {"task_id": uid, "status": "queued"}
 
-    
-@app.get("/api/status/{task_id}") 
-def check_status(task_id: str): 
-        path = f"{UPLOAD_DIR_2}/{task_id}_out.mp4" 
-        if os.path.exists(path + ".done"): 
-            return { "status": "done", "url": f"/api/download/{task_id}" } 
-        return {"status": "processing"} 
-
-@app.get("/api/download/{task_id}") 
-def download(task_id: str): 
-    return FileResponse( f"{UPLOAD_DIR_2}/{task_id}_out.mp4", media_type="video/mp4" )
-
- #3xVideo
+#3xVideo
 @app.post("/api/upscaleVideo3x")
 async def upscaleVideo(file: UploadFile = File(...)):
     uid = str(uuid.uuid4())
 
     input_path  = os.path.join(UPLOAD_DIR_2, f"{uid}_in.mp4")
-    gpu_path    = os.path.join(UPLOAD_DIR_2, f"{uid}_gpu.mp4")
-    ai_path     = os.path.join(UPLOAD_DIR_2, f"{uid}_ai.mp4")
     output_path = os.path.join(UPLOAD_DIR_2, f"{uid}_out.mp4")
 
     with open(input_path, "wb") as f:
@@ -364,32 +332,17 @@ async def upscaleVideo(file: UploadFile = File(...)):
     task_queue.put((
         upscale_video3x,
         (input_path,
-        gpu_path,
-        ai_path,
         output_path)
     ))
 
     return {"task_id": uid, "status": "queued"}
 
-    
-@app.get("/api/status/{task_id}") 
-def check_status(task_id: str): 
-        path = f"{UPLOAD_DIR_2}/{task_id}_out.mp4" 
-        if os.path.exists(path + ".done"): 
-            return { "status": "done", "url": f"/api/download/{task_id}" } 
-        return {"status": "processing"} 
-
-@app.get("/api/download/{task_id}") 
-def download(task_id: str): 
-    return FileResponse( f"{UPLOAD_DIR_2}/{task_id}_out.mp4", media_type="video/mp4" )
 
 @app.post("/api/upscaleVideo4x")
 async def upscaleVideo(file: UploadFile = File(...)):
     uid = str(uuid.uuid4())
 
     input_path  = os.path.join(UPLOAD_DIR_2, f"{uid}_in.mp4")
-    gpu_path    = os.path.join(UPLOAD_DIR_2, f"{uid}_gpu.mp4")
-    ai_path     = os.path.join(UPLOAD_DIR_2, f"{uid}_ai.mp4")
     output_path = os.path.join(UPLOAD_DIR_2, f"{uid}_out.mp4")
 
     with open(input_path, "wb") as f:
@@ -399,8 +352,6 @@ async def upscaleVideo(file: UploadFile = File(...)):
     task_queue.put((
         upscale_video4x,
         (input_path,
-        gpu_path,
-        ai_path,
         output_path)
     ))
 
