@@ -3,7 +3,6 @@ import numpy as np
 import gc
 from realcugan_ncnn_py import Realcugan
 import cv2
-import os
 import torch
 
 def sharpen_unsharp(img, strength=1.0):
@@ -11,13 +10,11 @@ def sharpen_unsharp(img, strength=1.0):
     sharpened = cv2.addWeighted(img, 1 + strength, blur, -strength, 0)
     return sharpened
 
-os.environ["NCNN_VULKAN_DISABLE_CACHE"] = "1"
-
 # ========== CONFIG ==========
 cv2.setNumThreads(1)
 cv2.ocl.setUseOpenCL(False)
 
-SCALE = 2
+
 GPU_ID = 1
 
 _model_cache = {}
@@ -61,7 +58,7 @@ def upscale_image2xnoise(img_path, scale = 2,noise = 3,tilescale = 256):
     del img
     gc.collect()
     if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+            torch.cuda.empty_cache()
     return sr
 
 def upscale_image2xsharp(img_path, scale = 2,noise = 0, tilescale = 256):
@@ -75,9 +72,8 @@ def upscale_image2xsharp(img_path, scale = 2,noise = 0, tilescale = 256):
     del img
     gc.collect()
     if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+          torch.cuda.empty_cache()
     return sr
-
 
 #3x
 def upscale_image3x(img_path, scale = 3,tilescale = 256,noise = 0):
@@ -89,7 +85,7 @@ def upscale_image3x(img_path, scale = 3,tilescale = 256,noise = 0):
     del img
     gc.collect()
     if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+        torch.cuda.empty_cache()
     return sr
 
 def upscale_image3xnoise(img_path, scale = 3,tilescale = 256,noise = 3):
@@ -101,7 +97,7 @@ def upscale_image3xnoise(img_path, scale = 3,tilescale = 256,noise = 3):
     del img
     gc.collect()
     if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+            torch.cuda.empty_cache()
     return sr
 
 def upscale_image3xsharp(img_path, scale = 3,noise = 0, tilescale = 256):
@@ -115,7 +111,7 @@ def upscale_image3xsharp(img_path, scale = 3,noise = 0, tilescale = 256):
     del img
     gc.collect()
     if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+        torch.cuda.empty_cache()
     return sr
 
 
@@ -128,7 +124,7 @@ def upscale_image4x(img_path, scale = 4,tilescale = 256,noise = 0):
     del img
     gc.collect()
     if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+            torch.cuda.empty_cache()
     return sr
 
 def upscale_image4xnoise(img_path, scale = 4,tilescale = 256,noise = 3):
@@ -140,7 +136,7 @@ def upscale_image4xnoise(img_path, scale = 4,tilescale = 256,noise = 3):
     del img
     gc.collect()
     if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+            torch.cuda.empty_cache()
     return sr
 def upscale_image4xsharp(img_path, scale = 4,noise = 0, tilescale = 256):
     
@@ -153,7 +149,7 @@ def upscale_image4xsharp(img_path, scale = 4,noise = 0, tilescale = 256):
     del img
     gc.collect()
     if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+             torch.cuda.empty_cache()
     return sr
 
 # ========== VIDEO INFO ==========
@@ -169,9 +165,9 @@ def get_video_info(path):
     info = json.loads(r.stdout)["streams"][0]
     return int(info["width"]), int(info["height"]), info["r_frame_rate"]
 
-def upscale_video2x(input_path,output_path,scale = 2, tilescale = 1024,noise = 0) :
+def upscale_video2x(input_path,output_path,scale = 2, tilescale = 512,noise =0) :
     width, height, fps = get_video_info(input_path) 
-    out_w, out_h = width * SCALE, height * SCALE
+    out_w, out_h = width * scale, height * scale
     decode_cmd = [
     "ffmpeg", "-loglevel", "error",
     "-hwaccel", "none",
@@ -225,7 +221,7 @@ def upscale_video2x(input_path,output_path,scale = 2, tilescale = 1024,noise = 0
         sr = model.process_cv2(frame)
 
         encoder.stdin.write(sr.tobytes())
-
+        print("Frame:", frame.shape, "SR:", sr.shape)
         del frame, sr
         frame_count += 1
         print(f"Processed {frame_count} frames")
@@ -238,9 +234,9 @@ def upscale_video2x(input_path,output_path,scale = 2, tilescale = 1024,noise = 0
 if __name__ == "__main__":
     upscale_video2x("input.mp4", "output_upscaled.mp4")  
 
-def upscale_video3x(input_path,output_path,scale = 2, tilescale = 256,noise = 0) :
+def upscale_video3x(input_path,output_path,scale = 3, tilescale = 256,noise = 0) :
     width, height, fps = get_video_info(input_path) 
-    out_w, out_h = width * SCALE, height * SCALE
+    out_w, out_h = width * scale, height * scale
     decode_cmd = [
     "ffmpeg", "-loglevel", "error",
     "-hwaccel", "none",
@@ -294,7 +290,7 @@ def upscale_video3x(input_path,output_path,scale = 2, tilescale = 256,noise = 0)
         sr = model.process_cv2(frame)
 
         encoder.stdin.write(sr.tobytes())
-
+        print("Frame:", frame.shape, "SR:", sr.shape)
         del frame, sr
         frame_count += 1
         print(f"Processed {frame_count} frames")
@@ -307,9 +303,9 @@ def upscale_video3x(input_path,output_path,scale = 2, tilescale = 256,noise = 0)
 if __name__ == "__main__":
     upscale_video3x("input.mp4", "output_upscaled.mp4")  
 
-def upscale_video4x(input_path,output_path,scale = 4, tilescale = 256,noise = 0) :
+def upscale_video4x(input_path,output_path,scale = 4, tilescale = 256, noise = 0) :
     width, height, fps = get_video_info(input_path) 
-    out_w, out_h = width * SCALE, height * SCALE
+    out_w, out_h = width * scale, height * scale
     decode_cmd = [
     "ffmpeg", "-loglevel", "error",
     "-hwaccel", "none",
@@ -363,7 +359,7 @@ def upscale_video4x(input_path,output_path,scale = 4, tilescale = 256,noise = 0)
         sr = model.process_cv2(frame)
 
         encoder.stdin.write(sr.tobytes())
-
+        print("Frame:", frame.shape, "SR:", sr.shape)
         del frame, sr
         frame_count += 1
         print(f"Processed {frame_count} frames")
@@ -372,7 +368,11 @@ def upscale_video4x(input_path,output_path,scale = 4, tilescale = 256,noise = 0)
     encoder.stdin.close()
     decoder.wait()
     encoder.wait()
+    
+
 # ========== RUN ==========
 if __name__ == "__main__":
     upscale_video4x("input.mp4", "output_upscaled.mp4") 
+
+
 
