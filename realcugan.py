@@ -4,7 +4,7 @@ import gc
 from realcugan_ncnn_py import Realcugan
 import cv2
 import os
-
+import torch
 
 def sharpen_unsharp(img, strength=1.0):
     blur = cv2.GaussianBlur(img, (0,0), 1.0)
@@ -46,7 +46,8 @@ def upscale_image2x(img_path, scale = 2,noise = 0, tilescale = 256):
 
     del img
     gc.collect()
-
+    if torch.cuda.is_available():
+            torch.cuda.empty_cache()
     return sr
 
 def upscale_image2xnoise(img_path, scale = 2,noise = 3,tilescale = 256):
@@ -59,7 +60,8 @@ def upscale_image2xnoise(img_path, scale = 2,noise = 3,tilescale = 256):
 
     del img
     gc.collect()
-
+    if torch.cuda.is_available():
+                torch.cuda.empty_cache()
     return sr
 
 def upscale_image2xsharp(img_path, scale = 2,noise = 0, tilescale = 256):
@@ -72,7 +74,8 @@ def upscale_image2xsharp(img_path, scale = 2,noise = 0, tilescale = 256):
     img = sharpen_unsharp(img,1)
     del img
     gc.collect()
-
+    if torch.cuda.is_available():
+                torch.cuda.empty_cache()
     return sr
 
 
@@ -85,7 +88,8 @@ def upscale_image3x(img_path, scale = 3,tilescale = 256,noise = 0):
 
     del img
     gc.collect()
-
+    if torch.cuda.is_available():
+                torch.cuda.empty_cache()
     return sr
 
 def upscale_image3xnoise(img_path, scale = 3,tilescale = 256,noise = 3):
@@ -96,7 +100,8 @@ def upscale_image3xnoise(img_path, scale = 3,tilescale = 256,noise = 3):
 
     del img
     gc.collect()
-
+    if torch.cuda.is_available():
+                torch.cuda.empty_cache()
     return sr
 
 def upscale_image3xsharp(img_path, scale = 3,noise = 0, tilescale = 256):
@@ -109,7 +114,8 @@ def upscale_image3xsharp(img_path, scale = 3,noise = 0, tilescale = 256):
     img = sharpen_unsharp(img,1)
     del img
     gc.collect()
-
+    if torch.cuda.is_available():
+                torch.cuda.empty_cache()
     return sr
 
 
@@ -121,7 +127,8 @@ def upscale_image4x(img_path, scale = 4,tilescale = 256,noise = 0):
 
     del img
     gc.collect()
-
+    if torch.cuda.is_available():
+                torch.cuda.empty_cache()
     return sr
 
 def upscale_image4xnoise(img_path, scale = 4,tilescale = 256,noise = 3):
@@ -132,7 +139,8 @@ def upscale_image4xnoise(img_path, scale = 4,tilescale = 256,noise = 3):
 
     del img
     gc.collect()
-
+    if torch.cuda.is_available():
+                torch.cuda.empty_cache()
     return sr
 def upscale_image4xsharp(img_path, scale = 4,noise = 0, tilescale = 256):
     
@@ -144,7 +152,8 @@ def upscale_image4xsharp(img_path, scale = 4,noise = 0, tilescale = 256):
     img = sharpen_unsharp(img,1)
     del img
     gc.collect()
-
+    if torch.cuda.is_available():
+                torch.cuda.empty_cache()
     return sr
 
 # ========== VIDEO INFO ==========
