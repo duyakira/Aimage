@@ -169,7 +169,7 @@ def get_video_info(path):
     info = json.loads(r.stdout)["streams"][0]
     return int(info["width"]), int(info["height"]), info["r_frame_rate"]
 
-def upscale_video2x(input_path,output_path,scale = 2, tilescale = 1024) :
+def upscale_video2x(input_path,output_path,scale = 2, tilescale = 1024,noise = 0) :
     width, height, fps = get_video_info(input_path) 
     out_w, out_h = width * SCALE, height * SCALE
     decode_cmd = [
@@ -216,7 +216,7 @@ def upscale_video2x(input_path,output_path,scale = 2, tilescale = 1024) :
     frame_count = 0
 
     while True:
-        model = get_model(scale,tilescale)
+        model = get_model(scale,tilescale,noise)
         raw = decoder.stdout.read(frame_size)
         if not raw:
             break
@@ -238,7 +238,7 @@ def upscale_video2x(input_path,output_path,scale = 2, tilescale = 1024) :
 if __name__ == "__main__":
     upscale_video2x("input.mp4", "output_upscaled.mp4")  
 
-def upscale_video3x(input_path,output_path,scale = 2, tilescale = 256) :
+def upscale_video3x(input_path,output_path,scale = 2, tilescale = 256,noise = 0) :
     width, height, fps = get_video_info(input_path) 
     out_w, out_h = width * SCALE, height * SCALE
     decode_cmd = [
@@ -285,7 +285,7 @@ def upscale_video3x(input_path,output_path,scale = 2, tilescale = 256) :
     frame_count = 0
 
     while True:
-        model = get_model(scale,tilescale)
+        model = get_model(scale,tilescale,noise)
         raw = decoder.stdout.read(frame_size)
         if not raw:
             break
@@ -307,7 +307,7 @@ def upscale_video3x(input_path,output_path,scale = 2, tilescale = 256) :
 if __name__ == "__main__":
     upscale_video3x("input.mp4", "output_upscaled.mp4")  
 
-def upscale_video4x(input_path,output_path,scale = 4, tilescale = 256) :
+def upscale_video4x(input_path,output_path,scale = 4, tilescale = 256,noise = 0) :
     width, height, fps = get_video_info(input_path) 
     out_w, out_h = width * SCALE, height * SCALE
     decode_cmd = [
@@ -354,7 +354,7 @@ def upscale_video4x(input_path,output_path,scale = 4, tilescale = 256) :
     frame_count = 0
 
     while True:
-        model = get_model(scale,tilescale)
+        model = get_model(scale,tilescale,noise)
         raw = decoder.stdout.read(frame_size)
         if not raw:
             break
