@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>RealCUGAN Upscale</title>
     <style>
-  
+        
         .h1 {  
             background-color: #e9d8f4;  
             color: #0d0811;  
@@ -23,7 +23,8 @@
         p{
             background-color: #e9d8f4;
         }
-        .imageAlign{    
+        .imageAlign{   
+margin: auto; 
 background: yellow;    
 height: fit-content;    
 width: fit-content;    
@@ -152,7 +153,7 @@ padding : 30px;
 
 <div class = "imageAlign">
     <h1>Images</h1>
-
+ 
     <input type="file" id="file">
 
     <div class="dropdown">
@@ -410,17 +411,18 @@ padding : 30px;
         }
         
     </script>
-
-<a id = "downloadLink" href = link.download download = "result">
-   <img id = "result" src = img.src width= "400" height="225"></img>
-</a>
+    <img id = "result" src = img.src width= "800" height="450" style="object-fit: contain; background:#ffffff;"></img>
+    <br></br>
+    <a id = "downloadLink" href = link.download src = img.src download = "result">
+    <button>Download</button>
+    </a>
 
 
 <h2>Video</h2>
 
 <input type="file" id="video2">
 <button onclick="uploadVideo2x()">Upscale2x</button>
-<button onclick="uploadVideo3x()">Upscale2x</button>
+<button onclick="uploadVideo3x()">Upscale3x</button>
 <button onclick="uploadVideo4x()">Upscale4x</button>
 
 <p id="status"></p>
@@ -446,8 +448,58 @@ async function uploadVideo2x() {
     formData.append("file", fileInput.files[0]);
 
     status.innerText = "⏳ Uploading...";
-
+    
+          
     const res = await fetch("/api/upscaleVideo2x", {
+        method: "POST",
+        body: formData
+    });
+    status.innerText = "⚙️ Processing...";
+
+    const {task_id} = data = await res.json();
+
+    const timer = setInterval(async () => {
+        const r = await fetch(`/api/status/${task_id}`);
+        const s = await r.json();
+        
+            if (s.status === "done") {
+            clearInterval(timer);
+            status.innerText = "✅ Done";
+            
+            const videoUrl = `/api/download/${task_id}?t=${Date.now()}`;
+            video.src = videoUrl
+            video.load();
+            video.play().catch(() => {});
+            const link = document.getElementById("downloadLinkVideo");
+            link.href = video.src
+            link.download = "upscaled.mp4";
+            link.style.display = "inline-block";
+        }
+    }, 3000);
+        }
+</script>
+ <script>
+    async function uploadVideo3x() {
+    const fileInput = document.getElementById("video2");
+    const video = document.getElementById("videoResult");
+    const status = document.getElementById("status");
+    
+    if (!fileInput.files.length) {
+        alert("Chưa chọn video");
+        return;
+    }
+
+    video.pause();
+    video.src = ""
+    video.removeAttribute("src");
+    video.load();
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    status.innerText = "⏳ Uploading...";
+
+    const res = await fetch("/api/upscaleVideo3x", {
         method: "POST",
         body: formData
     });
@@ -464,20 +516,21 @@ async function uploadVideo2x() {
             clearInterval(timer);
             status.innerText = "✅ Done";
 
-            video.src = `/api/download/${task_id}?t=${Date.now()}`;
+            const videoUrl = `/api/download/${task_id}?t=${Date.now()}`;
+            video.src = videoUrl
             video.load();
             video.play().catch(() => {});
+            const link = document.getElementById("downloadLinkVideo");
+            link.href = video.src
+            link.download = "upscaled.mp4";
+            link.style.display = "inline-block";
         }
     }, 3000);
 
-    const link = document.getElementById("downloadLinkVideo");
-          link.href = video.src
-          link.download = "upscaled.mp4";
-          link.style.display = "inline-block";
+    
         }
-</script>
- 
 
+</script>
 <script>
     async function uploadVideo4x() {
     const fileInput = document.getElementById("video2");
@@ -516,38 +569,43 @@ async function uploadVideo2x() {
             clearInterval(timer);
             status.innerText = "✅ Done";
 
-            video.src = `/api/download/${task_id}?t=${Date.now()}`;
+            const videoUrl = `/api/download/${task_id}?t=${Date.now()}`;
+            video.src = videoUrl
             video.load();
             video.play().catch(() => {});
+            const link = document.getElementById("downloadLinkVideo");
+            link.href = video.src
+            link.download = "upscaled.mp4";
+            link.style.display = "inline-block";
         }
     }, 3000);
 
-    const link = document.getElementById("downloadLinkVideo");
-          link.href = video.src
-          link.download = "upscaled.mp4";
-          link.style.display = "inline-block";
+    
         }
 
 </script>
-
-<a id = "downloadLinkVideo" href= link.download download = "result" >
-    <video class = "bg-video" video.src id="videoResult" controls width="400" controls height="225">       
+<video class = "bg-video" src = video.src id ="videoResult" controls width="800" controls height="450">       
     </video>
-    </a> 
+<br></br>
+<a id = "downloadLinkVideo" src = video.src href= link.download download = "videoResult" >
+     <button>Download</button></a> 
 
     <h3>Supporting Tools and Response Link</h3>
-    <button >
-        <a href ="https://imagecompressor.11zon.com/en/compress-jpeg/compress-jpeg-to-100kb">Compress Images</a>
-    </button>
-    <button >
-        <a href="https://www.freeconvert.com/video-compressor">Compress Videos</a>
-    </button>
-    <button >
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdwhAya9bH4d2NyOQwfp5P-oZ-5gs4juY2xNBxsBUuGgyt0LA/viewform?usp=publish-editor">Response Link</a>
-    </button>
+        <a href ="https://imagecompressor.11zon.com/en/compress-jpeg/compress-jpeg-to-100kb">
+            <button>Compress Images</button>
+            </a>
+        <a href="https://www.freeconvert.com/video-compressor">
+            <button>Compress Video </button>
+        </a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdwhAya9bH4d2NyOQwfp5P-oZ-5gs4juY2xNBxsBUuGgyt0LA/viewform?usp=publish-editor">
+            <button>Response Link</button>
+        </a>
+
     </script>
 </div>
 </body>
 
 </html>
+
+
 
