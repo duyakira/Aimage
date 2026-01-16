@@ -5,7 +5,7 @@ import gc
 import traceback
 import subprocess
 import os
-task_queue = queue.Queue(maxsize=3)
+task_queue = queue.Queue(maxsize=40)
 FFMPEG_PATH = r"C:\ffmpeg-8.0.1-full_build\bin\ffmpeg.exe"
 def merge_audio(video_no_audio, video_with_audio, output_path):
     cmd = [
@@ -78,7 +78,7 @@ def worker():
             task_queue.task_done()
 
 
-for _ in range(3):
+for _ in range(40):
     threading.Thread(target=worker, daemon=True).start()
 
 
