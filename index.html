@@ -222,14 +222,18 @@ padding : 30px;
     <br></br>
 
 <p id = "status"></p>
+
 <script>
+let startTime = 0;
 async function upload2x() {
+    startTime = performance.now();
     const fileInput = document.getElementById("file");
     const status = document.getElementById("status");
     const img = document.getElementById("result");
     const link = document.getElementById("downloadLink");
 
     status.innerText = "⏳ Uploading...";
+    
 
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
@@ -241,7 +245,7 @@ async function upload2x() {
 
     const data = await res.json();
     const uid = data.uid;
-
+   
     status.innerText = "⚙️ Processing...";
 
     const timer = setInterval(async () => {
@@ -253,17 +257,22 @@ async function upload2x() {
 
             const imgUrl = s.result + "?t=" + Date.now();
             img.src = imgUrl;
-
+            img.onload = () => {
+            const endTime = performance.now();
+            const total = ((endTime - startTime) / 1000).toFixed(2);
+            status.innerText = `✅ Done in ${total}s`;
+        };
             link.href = imgUrl;
             link.download = "upscaled.png";
             link.style.display = "inline-block";
 
-            status.innerText = "✅ Done";
+            
         }
     }, 3000);
 }
 
 async function upload2xnoise() {
+    startTime = performance.now()
     const fileInput = document.getElementById("file");
     const status = document.getElementById("status");
     const img = document.getElementById("result");
@@ -293,7 +302,11 @@ async function upload2xnoise() {
 
             const imgUrl = s.result + "?t=" + Date.now();
             img.src = imgUrl;
-
+            img.onload = () => {
+            const endTime = performance.now();
+            const total = ((endTime - startTime) / 1000).toFixed(2);
+            status.innerText = `✅ Done in ${total}s`;
+        };
             link.href = imgUrl;
             link.download = "upscaled.png";
             link.style.display = "inline-block";
@@ -304,6 +317,7 @@ async function upload2xnoise() {
 }
 
 async function upload2xsharp() {
+    startTime = performance.now()
     const fileInput = document.getElementById("file");
     const status = document.getElementById("status");
     const img = document.getElementById("result");
@@ -333,7 +347,11 @@ async function upload2xsharp() {
 
             const imgUrl = s.result + "?t=" + Date.now();
             img.src = imgUrl;
-
+            img.onload = () => {
+            const endTime = performance.now();
+            const total = ((endTime - startTime) / 1000).toFixed(2);
+            status.innerText = `✅ Done in ${total}s`;
+        };
             link.href = imgUrl;
             link.download = "upscaled.png";
             link.style.display = "inline-block";
@@ -343,6 +361,7 @@ async function upload2xsharp() {
     }, 3000);
 }
 async function upload3x() {
+    startTime = performance.now()
     const fileInput = document.getElementById("file");
     const status = document.getElementById("status");
     const img = document.getElementById("result");
@@ -372,7 +391,11 @@ async function upload3x() {
 
             const imgUrl = s.result + "?t=" + Date.now();
             img.src = imgUrl;
-
+            img.onload = () => {
+            const endTime = performance.now();
+            const total = ((endTime - startTime) / 1000).toFixed(2);
+            status.innerText = `✅ Done in ${total}s`;
+        };
             link.href = imgUrl;
             link.download = "upscaled.png";
             link.style.display = "inline-block";
@@ -381,7 +404,8 @@ async function upload3x() {
         }
     }, 3000);
 }
-        async function upload3xnoise() {
+    async function upload3xnoise() {
+    startTime = performance.now();
     const fileInput = document.getElementById("file");
     const status = document.getElementById("status");
     const img = document.getElementById("result");
@@ -411,7 +435,11 @@ async function upload3x() {
 
             const imgUrl = s.result + "?t=" + Date.now();
             img.src = imgUrl;
-
+            img.onload = () => {
+            const endTime = performance.now();
+            const total = ((endTime - startTime) / 1000).toFixed(2);
+            status.innerText = `✅ Done in ${total}s`;
+        };
             link.href = imgUrl;
             link.download = "upscaled.png";
             link.style.display = "inline-block";
@@ -421,6 +449,7 @@ async function upload3x() {
     }, 3000);
 }
         async function upload3xsharp() {
+    startTime = performance.now();
     const fileInput = document.getElementById("file");
     const status = document.getElementById("status");
     const img = document.getElementById("result");
@@ -450,7 +479,11 @@ async function upload3x() {
 
             const imgUrl = s.result + "?t=" + Date.now();
             img.src = imgUrl;
-
+            img.onload = () => {
+            const endTime = performance.now();
+            const total = ((endTime - startTime) / 1000).toFixed(2);
+            status.innerText = `✅ Done in ${total}s`;
+        };
             link.href = imgUrl;
             link.download = "upscaled.png";
             link.style.display = "inline-block";
@@ -462,6 +495,7 @@ async function upload3x() {
 
 
        async function upload4x() {
+    startTime = performance.now();
     const fileInput = document.getElementById("file");
     const status = document.getElementById("status");
     const img = document.getElementById("result");
@@ -491,7 +525,11 @@ async function upload3x() {
 
             const imgUrl = s.result + "?t=" + Date.now();
             img.src = imgUrl;
-
+            img.onload = () => {
+            const endTime = performance.now();
+            const total = ((endTime - startTime) / 1000).toFixed(2);
+            status.innerText = `✅ Done in ${total}s`;
+        };
             link.href = imgUrl;
             link.download = "upscaled.png";
             link.style.display = "inline-block";
@@ -501,6 +539,7 @@ async function upload3x() {
     }, 3000);
 }
 async function upload4xnoise() {
+    startTime = performance.now();
     const fileInput = document.getElementById("file");
     const status = document.getElementById("status");
     const img = document.getElementById("result");
@@ -530,7 +569,11 @@ async function upload4xnoise() {
 
             const imgUrl = s.result + "?t=" + Date.now();
             img.src = imgUrl;
-
+            img.onload = () => {
+            const endTime = performance.now();
+            const total = ((endTime - startTime) / 1000).toFixed(2);
+            status.innerText = `✅ Done in ${total}s`;
+        };
             link.href = imgUrl;
             link.download = "upscaled.png";
             link.style.display = "inline-block";
@@ -541,6 +584,7 @@ async function upload4xnoise() {
 }
             
 async function upload4xsharp() {
+    startTime = performance.now();
     const fileInput = document.getElementById("file");
     const status = document.getElementById("status");
     const img = document.getElementById("result");
@@ -570,7 +614,11 @@ async function upload4xsharp() {
 
             const imgUrl = s.result + "?t=" + Date.now();
             img.src = imgUrl;
-
+            img.onload = () => {
+            const endTime = performance.now();
+            const total = ((endTime - startTime) / 1000).toFixed(2);
+            status.innerText = `✅ Done in ${total}s`;
+        };
             link.href = imgUrl;
             link.download = "upscaled.png";
             link.style.display = "inline-block";
@@ -599,7 +647,9 @@ async function upload4xsharp() {
 
 
 <script>
+
 async function uploadVideo2x() {
+    startTime = performance.now();
     const fileInput = document.getElementById("video2");
     const video = document.getElementById("videoResult");
     const status = document.getElementById("status");
@@ -638,19 +688,25 @@ async function uploadVideo2x() {
             
             const videoUrl = `/api/download/${task_id}?t=${Date.now()}`;
             video.src = videoUrl
+            video.onloadeddata = () => {
+            const endTime = performance.now();
+            const total = ((endTime - startTime) / 1000).toFixed(2);
+            status.innerText = `✅ Done in ${total}s`;
+        };
             video.load();
             video.play().catch(() => {});
             const link = document.getElementById("downloadLinkVideo");
             link.href = video.src
             link.download = "upscaled.mp4";
             link.style.display = "inline-block";
-            status.innerText = "✅ Done";
+           
         }
     }, 3000);
         }
 </script>
  <script>
     async function uploadVideo3x() {
+    startTime = performance.now();
     const fileInput = document.getElementById("video2");
     const video = document.getElementById("videoResult");
     const status = document.getElementById("status");
@@ -685,10 +741,14 @@ async function uploadVideo2x() {
 
         if (s.status === "done") {
             clearInterval(timer);
-            status.innerText = "✅ Done";
 
             const videoUrl = `/api/download/${task_id}?t=${Date.now()}`;
             video.src = videoUrl
+            video.onloadeddata = () => {
+            const endTime = performance.now();
+            const total = ((endTime - startTime) / 1000).toFixed(2);
+            status.innerText = `✅ Done in ${total}s`;
+        };
             video.load();
             video.play().catch(() => {});
             const link = document.getElementById("downloadLinkVideo");
@@ -704,6 +764,7 @@ async function uploadVideo2x() {
 </script>
 <script>
     async function uploadVideo4x() {
+    startTime = performance.now();
     const fileInput = document.getElementById("video2");
     const video = document.getElementById("videoResult");
     const status = document.getElementById("status");
@@ -742,10 +803,16 @@ async function uploadVideo2x() {
 
             const videoUrl = `/api/download/${task_id}?t=${Date.now()}`;
             video.src = videoUrl
+            
             video.load();
             video.play().catch(() => {});
             const link = document.getElementById("downloadLinkVideo");
             link.href = video.src
+            video.onloadeddata = () => {
+            const endTime = performance.now();
+            const total = ((endTime - startTime) / 1000).toFixed(2);
+            status.innerText = `✅ Done in ${total}s`;
+        };
             link.download = "upscaled.mp4";
             link.style.display = "inline-block";
         }
@@ -777,7 +844,3 @@ async function uploadVideo2x() {
 </body>
 
 </html>
-
-
-
-
