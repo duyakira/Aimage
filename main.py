@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 import shutil
 import os
 import uuid
-from queue_worker import task_queue
+from queue_worker import task_queue, task_queue2
 import cv2
 from realcugan import upscale_image2x, upscale_image3x, upscale_image4x,upscale_image2xnoise, upscale_image3xnoise, upscale_image4xnoise,upscale_image2xsharp, upscale_image3xsharp, upscale_image4xsharp
 from realcugan import upscale_video2x,upscale_video4x, upscale_video3x
@@ -30,34 +30,22 @@ def index():
     with open("../frontend/templates/index.html", "r", encoding="utf-8") as f:
         return f.read()
     
-
 @app.post("/api/upscale2x")
 async def upscale(file: UploadFile = File(...)):
     uid = str(uuid.uuid4())
     input_path = os.path.join(UPLOAD_DIR, f"{uid}_in.png")
     output_path = os.path.join(UPLOAD_DIR, f"{uid}_out.png")
 
-    try:
+    
         # lưu file
-        with open(input_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
+    with open(input_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
             
         # xử lý AI
-        sr = upscale_image2x(input_path)
-        cv2.imwrite(output_path, sr)
+        task_queue2.put((upscale_image2x,(input_path,output_path)))
 
-        return {"result": f"/result/{uid}"}
+        return {"uid": uid, "status" : "queued"}
 
-    finally : 
-        if os.path.exists(input_path):
-           os.remove(input_path)
-        if sr is not None:
-           del sr
-
-           
-        gc.collect()
-        if torch.cuda.is_available(): 
-            torch.cuda.empty_cache()
 
 @app.post("/api/upscale2xnoise")
 async def upscale(file: UploadFile = File(...)):
@@ -65,27 +53,17 @@ async def upscale(file: UploadFile = File(...)):
     input_path = os.path.join(UPLOAD_DIR, f"{uid}_in.png")
     output_path = os.path.join(UPLOAD_DIR, f"{uid}_out.png")
 
-    try:
+    
         # lưu file
-        with open(input_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
+    with open(input_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
             
         # xử lý AI
-        sr = upscale_image2xnoise(input_path)
-        cv2.imwrite(output_path, sr)
+        task_queue2.put((upscale_image2xnoise,(input_path,output_path)))
 
-        return {"result": f"/result/{uid}"}
+        return {"uid": uid, "status" : "queued"}
 
-    finally : 
-        if os.path.exists(input_path):
-           os.remove(input_path)
-        if sr is not None:
-           del sr
 
-           
-        gc.collect()
-        if torch.cuda.is_available(): 
-            torch.cuda.empty_cache()
 
 @app.post("/api/upscale2xsharp")
 async def upscale(file: UploadFile = File(...)):
@@ -93,27 +71,17 @@ async def upscale(file: UploadFile = File(...)):
     input_path = os.path.join(UPLOAD_DIR, f"{uid}_in.png")
     output_path = os.path.join(UPLOAD_DIR, f"{uid}_out.png")
 
-    try:
+    
         # lưu file
-        with open(input_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
+    with open(input_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
             
         # xử lý AI
-        sr = upscale_image2xsharp(input_path)
-        cv2.imwrite(output_path, sr)
+        task_queue2.put((upscale_image2xsharp,(input_path,output_path)))
 
-        return {"result": f"/result/{uid}"}
+        return {"uid": uid, "status" : "queued"}
 
-    finally : 
-        if os.path.exists(input_path):
-           os.remove(input_path)
-        if sr is not None:
-           del sr
 
-           
-        gc.collect()
-        if torch.cuda.is_available(): 
-            torch.cuda.empty_cache()
 
 
 @app.post("/api/upscale3x")
@@ -122,25 +90,13 @@ async def upscale(file: UploadFile = File(...)):
     input_path = os.path.join(UPLOAD_DIR, f"{uid}_in.png")
     output_path = os.path.join(UPLOAD_DIR, f"{uid}_out.png")
 
-    try:
-        # lưu file
-        with open(input_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
-
+    with open(input_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+            
         # xử lý AI
-        sr = upscale_image3x(input_path)
-        cv2.imwrite(output_path, sr)
-        return {"result": f"/result/{uid}"}
-       
+        task_queue2.put((upscale_image3x,(input_path,output_path)))
 
-    finally : 
-        if os.path.exists(input_path):
-           os.remove(input_path)
-        
-        del sr
-        gc.collect()
-        if torch.cuda.is_available(): 
-            torch.cuda.empty_cache()
+        return {"uid": uid, "status" : "queued"}
 
 @app.post("/api/upscale3xnoise")
 async def upscale(file: UploadFile = File(...)):
@@ -148,53 +104,26 @@ async def upscale(file: UploadFile = File(...)):
     input_path = os.path.join(UPLOAD_DIR, f"{uid}_in.png")
     output_path = os.path.join(UPLOAD_DIR, f"{uid}_out.png")
 
-    try:
-        # lưu file
-        with open(input_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
-
+    with open(input_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+            
         # xử lý AI
-        sr = upscale_image3xnoise(input_path)
-        cv2.imwrite(output_path, sr)
-        return {"result": f"/result/{uid}"}
-       
+        task_queue2.put((upscale_image3xnoise,(input_path,output_path)))
 
-    finally : 
-        if os.path.exists(input_path):
-           os.remove(input_path)
-        
-        del sr
-        gc.collect()
-        if torch.cuda.is_available(): 
-            torch.cuda.empty_cache()
-
+        return {"uid": uid, "status" : "queued"}
 @app.post("/api/upscale3xsharp")
 async def upscale(file: UploadFile = File(...)):
     uid = str(uuid.uuid4())
     input_path = os.path.join(UPLOAD_DIR, f"{uid}_in.png")
     output_path = os.path.join(UPLOAD_DIR, f"{uid}_out.png")
 
-    try:
-        # lưu file
-        with open(input_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
+    with open(input_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
             
         # xử lý AI
-        sr = upscale_image3xsharp(input_path)
-        cv2.imwrite(output_path, sr)
+        task_queue2.put((upscale_image3xsharp,(input_path,output_path)))
 
-        return {"result": f"/result/{uid}"}
-
-    finally : 
-        if os.path.exists(input_path):
-           os.remove(input_path)
-        if sr is not None:
-           del sr
-
-           
-        gc.collect()
-        if torch.cuda.is_available(): 
-            torch.cuda.empty_cache()
+        return {"uid": uid, "status" : "queued"}
 
 
 
@@ -204,25 +133,13 @@ async def upscale(file: UploadFile = File(...)):
     input_path = os.path.join(UPLOAD_DIR, f"{uid}_in.png")
     output_path = os.path.join(UPLOAD_DIR, f"{uid}_out.png")
 
-    try:
-        # lưu file
-        with open(input_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
-
+    with open(input_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+            
         # xử lý AI
-        sr = upscale_image4x(input_path)
-        cv2.imwrite(output_path, sr)
-        return {"result": f"/result/{uid}"}
-       
+        task_queue2.put((upscale_image4x,(input_path,output_path)))
 
-    finally : 
-        if os.path.exists(input_path):
-           os.remove(input_path)
-        
-        del sr
-        gc.collect()
-        if torch.cuda.is_available(): 
-            torch.cuda.empty_cache()
+        return {"uid": uid, "status" : "queued"}
 
 @app.post("/api/upscale4xnoise")
 async def upscale(file: UploadFile = File(...)):
@@ -230,25 +147,13 @@ async def upscale(file: UploadFile = File(...)):
     input_path = os.path.join(UPLOAD_DIR, f"{uid}_in.png")
     output_path = os.path.join(UPLOAD_DIR, f"{uid}_out.png")
 
-    try:
-        # lưu file
-        with open(input_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
-
+    with open(input_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+            
         # xử lý AI
-        sr = upscale_image4xnoise(input_path)
-        cv2.imwrite(output_path, sr)
-        return {"result": f"/result/{uid}"}
-       
+        task_queue2.put((upscale_image4xnoise,(input_path,output_path)))
 
-    finally : 
-        if os.path.exists(input_path):
-           os.remove(input_path)
-        
-        del sr
-        gc.collect()
-        if torch.cuda.is_available(): 
-            torch.cuda.empty_cache()
+        return {"uid": uid, "status" : "queued"}
 
 @app.post("/api/upscale4xsharp")
 async def upscale(file: UploadFile = File(...)):
@@ -256,34 +161,26 @@ async def upscale(file: UploadFile = File(...)):
     input_path = os.path.join(UPLOAD_DIR, f"{uid}_in.png")
     output_path = os.path.join(UPLOAD_DIR, f"{uid}_out.png")
 
-    try:
-        # lưu file
-        with open(input_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
+    with open(input_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
             
         # xử lý AI
-        sr = upscale_image4xsharp(input_path)
-        cv2.imwrite(output_path, sr)
+        task_queue2.put((upscale_image4xsharp,(input_path,output_path)))
 
-        return {"result": f"/result/{uid}"}
+        return {"uid": uid, "status" : "queued"}
 
-    finally : 
-        if os.path.exists(input_path):
-           os.remove(input_path)
-        if sr is not None:
-           del sr
-
-           
-        gc.collect()
-        if torch.cuda.is_available(): 
-            torch.cuda.empty_cache()
-
+@app.get("/api/status/{uid}") 
+def check_status(uid: str): 
+        path = f"{UPLOAD_DIR}/{uid}_out.png" 
+        if os.path.exists(path + ".done"): 
+            return { "status": "done", "result": f"/result/{uid}" } 
+        return {"status": "processing"} 
 
 @app.get("/result/{uid}")
 def get_result(uid: str):
     path = f"{UPLOAD_DIR}/{uid}_out.png"
-    if os.path.exists(path):
-       return FileResponse(path, media_type="image/png")
+    if os.path.exists(path + ".done"):
+       return FileResponse(f"{UPLOAD_DIR}/{uid}_out.png", media_type="image/png")
 
     
 BASE_DIR_2 = os.path.dirname(__file__)
