@@ -32,19 +32,7 @@ border: solid 1px red;
 border-radius: 10px;
 padding : 30px;       
 
-}     
-        #status {
-    position:fixed;
-    top: 20px;            
-    right: 20px;           
-    
-    background: #000;
-    color: #0f0;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-weight: bold;
-    z-index: 9999;
-}
+}    
 
          
         body {
@@ -59,7 +47,19 @@ padding : 30px;
   margin: 0; /* removes default body margin */
         }
         
-        
+         
+        #status {
+    position:fixed;
+    top: 20px;            
+    right: 20px;           
+    
+    background: #000;
+    color: #0f0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    z-index: 9999;
+}
        
        
         button {
@@ -220,6 +220,7 @@ padding : 30px;
     </script>
 
     <br></br>
+
 <p id = "status"></p>
 <script>
 async function upload2x() {
@@ -244,7 +245,7 @@ async function upload2x() {
     status.innerText = "⚙️ Processing...";
 
     const timer = setInterval(async () => {
-        const r = await fetch(`/api/status/${uid}`);
+        const r = await fetch(`/api/image_status/${uid}`);
         const s = await r.json();
 
         if (s.status === "done") {
@@ -284,7 +285,7 @@ async function upload2xnoise() {
     status.innerText = "⚙️ Processing...";
 
     const timer = setInterval(async () => {
-        const r = await fetch(`/api/status/${uid}`);
+        const r = await fetch(`/api/image_status/${uid}`);
         const s = await r.json();
 
         if (s.status === "done") {
@@ -324,7 +325,7 @@ async function upload2xsharp() {
     status.innerText = "⚙️ Processing...";
 
     const timer = setInterval(async () => {
-        const r = await fetch(`/api/status/${uid}`);
+        const r = await fetch(`/api/image_status/${uid}`);
         const s = await r.json();
 
         if (s.status === "done") {
@@ -363,7 +364,7 @@ async function upload3x() {
     status.innerText = "⚙️ Processing...";
 
     const timer = setInterval(async () => {
-        const r = await fetch(`/api/status/${uid}`);
+        const r = await fetch(`/api/image_status/${uid}`);
         const s = await r.json();
 
         if (s.status === "done") {
@@ -402,7 +403,7 @@ async function upload3x() {
     status.innerText = "⚙️ Processing...";
 
     const timer = setInterval(async () => {
-        const r = await fetch(`/api/status/${uid}`);
+        const r = await fetch(`/api/image_status/${uid}`);
         const s = await r.json();
 
         if (s.status === "done") {
@@ -441,7 +442,7 @@ async function upload3x() {
     status.innerText = "⚙️ Processing...";
 
     const timer = setInterval(async () => {
-        const r = await fetch(`/api/status/${uid}`);
+        const r = await fetch(`/api/image_status/${uid}`);
         const s = await r.json();
 
         if (s.status === "done") {
@@ -482,7 +483,7 @@ async function upload3x() {
     status.innerText = "⚙️ Processing...";
 
     const timer = setInterval(async () => {
-        const r = await fetch(`/api/status/${uid}`);
+        const r = await fetch(`/api/image_status/${uid}`);
         const s = await r.json();
 
         if (s.status === "done") {
@@ -521,7 +522,7 @@ async function upload4xnoise() {
     status.innerText = "⚙️ Processing...";
 
     const timer = setInterval(async () => {
-        const r = await fetch(`/api/status/${uid}`);
+        const r = await fetch(`/api/image_status/${uid}`);
         const s = await r.json();
 
         if (s.status === "done") {
@@ -561,7 +562,7 @@ async function upload4xsharp() {
     status.innerText = "⚙️ Processing...";
 
     const timer = setInterval(async () => {
-        const r = await fetch(`/api/status/${uid}`);
+        const r = await fetch(`/api/image_status/${uid}`);
         const s = await r.json();
 
         if (s.status === "done") {
@@ -628,12 +629,12 @@ async function uploadVideo2x() {
     const {task_id} = data = await res.json();
 
     const timer = setInterval(async () => {
-        const r = await fetch(`/api/status/${task_id}`);
+        const r = await fetch(`/api/video_status/${task_id}`);
         const s = await r.json();
         
             if (s.status === "done") {
             clearInterval(timer);
-            status.innerText = "✅ Done";
+            
             
             const videoUrl = `/api/download/${task_id}?t=${Date.now()}`;
             video.src = videoUrl
@@ -643,6 +644,7 @@ async function uploadVideo2x() {
             link.href = video.src
             link.download = "upscaled.mp4";
             link.style.display = "inline-block";
+            status.innerText = "✅ Done";
         }
     }, 3000);
         }
@@ -677,7 +679,7 @@ async function uploadVideo2x() {
     const {task_id} = data = await res.json();
 
     const timer = setInterval(async () => {
-        const r = await fetch(`/api/status/${task_id}`);
+        const r = await fetch(`/api/video_status/${task_id}`);
         const s = await r.json();
         
 
@@ -730,7 +732,7 @@ async function uploadVideo2x() {
     const {task_id} = data = await res.json();
 
     const timer = setInterval(async () => {
-        const r = await fetch(`/api/status/${task_id}`);
+        const r = await fetch(`/api/video_status/${task_id}`);
         const s = await r.json();
         
 
