@@ -169,7 +169,7 @@ async def upscale(file: UploadFile = File(...)):
 
         return {"uid": uid, "status" : "queued"}
 
-@app.get("/api/status/{uid}") 
+@app.get("/api/image_status/{uid}") 
 def check_status(uid: str): 
         path = f"{UPLOAD_DIR}/{uid}_out.png" 
         if os.path.exists(path + ".done"): 
@@ -255,7 +255,7 @@ async def upscaleVideo(file: UploadFile = File(...)):
     return {"task_id": uid, "status": "queued"}
 
     
-@app.get("/api/status/{task_id}") 
+@app.get("/api/video_status/{task_id}") 
 def check_status(task_id: str): 
         path = f"{UPLOAD_DIR_2}/{task_id}_out.mp4" 
         if os.path.exists(path + ".done"): 
@@ -264,4 +264,5 @@ def check_status(task_id: str):
 
 @app.get("/api/download/{task_id}") 
 def download(task_id: str): 
+    path = f"{UPLOAD_DIR_2}/{task_id}_out.mp4" 
     return FileResponse( f"{UPLOAD_DIR_2}/{task_id}_out.mp4", media_type="video/mp4" )
