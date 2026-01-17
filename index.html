@@ -26,13 +26,26 @@
         .imageAlign{   
 margin: auto; 
 background: yellow;    
-height: fit-content;    
-width: fit-content;    
+height: 1500px;    
+width: 1000px;    
 border: solid 1px red; 
 border-radius: 10px;
 padding : 30px;       
 
+}     
+        #status {
+    position:fixed;
+    top: 20px;            
+    right: 20px;           
+    
+    background: #000;
+    color: #0f0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    z-index: 9999;
 }
+
          
         body {
              font-family: Arial;
@@ -193,8 +206,8 @@ padding : 30px;
     <div class="dropdown">
     <button onclick="upscale4x()">Upscale4x</button>
     <div id="menu3" class="dropdown-content">
-    <button onclick="upload4x()">4x + noise</button>
-    <button onclick="upload4xnoise()">4x</button>
+    <button onclick="upload4xnoise()">4x + noise</button>
+    <button onclick="upload4x()">4x</button>
     <button onclick="upload4xsharp()">4x sharpen</button>
     </div>
     </div>
@@ -205,210 +218,366 @@ padding : 30px;
     menu.style.display = (menu.style.display === "block") ? "none" : "block";
     }
     </script>
-    
+
     <br></br>
+<p id = "status"></p>
+<script>
+async function upload2x() {
+    const fileInput = document.getElementById("file");
+    const status = document.getElementById("status");
+    const img = document.getElementById("result");
+    const link = document.getElementById("downloadLink");
 
-    <script>
-        async function upload2x() {
-            const fileInput = document.getElementById("file");
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
+    status.innerText = "⏳ Uploading...";
 
-            const res = await fetch("/api/upscale2x", {
-                method: "POST",
-                body: formData
-            });
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
 
-            const data = await res.json();
+    const res = await fetch("/api/upscale2x", {
+        method: "POST",
+        body: formData
+    });
 
-            const img = document.getElementById("result");
-            img.src = data.result;
-            
-            
-            const link = document.getElementById("downloadLink");
-                  link.href = data.result + "?t=" + Date.now(); // chống cache
-                  link.download = "upscaled.png";
-                  link.style.display = "inline-block";
+    const data = await res.json();
+    const uid = data.uid;
+
+    status.innerText = "⚙️ Processing...";
+
+    const timer = setInterval(async () => {
+        const r = await fetch(`/api/status/${uid}`);
+        const s = await r.json();
+
+        if (s.status === "done") {
+            clearInterval(timer);
+
+            const imgUrl = s.result + "?t=" + Date.now();
+            img.src = imgUrl;
+
+            link.href = imgUrl;
+            link.download = "upscaled.png";
+            link.style.display = "inline-block";
+
+            status.innerText = "✅ Done";
         }
+    }, 3000);
+}
 
-        async function upload2xnoise() {
-            const fileInput = document.getElementById("file");
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
+async function upload2xnoise() {
+    const fileInput = document.getElementById("file");
+    const status = document.getElementById("status");
+    const img = document.getElementById("result");
+    const link = document.getElementById("downloadLink");
 
-            const res = await fetch("/api/upscale2xnoise", {
-                method: "POST",
-                body: formData
-            });
+    status.innerText = "⏳ Uploading...";
 
-            const data = await res.json();
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
 
-            const img = document.getElementById("result");
-            img.src = data.result;
-            
-            
-            const link = document.getElementById("downloadLink");
-                  link.href = data.result + "?t=" + Date.now(); // chống cache
-                  link.download = "upscaled.png";
-                  link.style.display = "inline-block";
+    const res = await fetch("/api/upscale2xnoise", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+    const uid = data.uid;
+
+    status.innerText = "⚙️ Processing...";
+
+    const timer = setInterval(async () => {
+        const r = await fetch(`/api/status/${uid}`);
+        const s = await r.json();
+
+        if (s.status === "done") {
+            clearInterval(timer);
+
+            const imgUrl = s.result + "?t=" + Date.now();
+            img.src = imgUrl;
+
+            link.href = imgUrl;
+            link.download = "upscaled.png";
+            link.style.display = "inline-block";
+
+            status.innerText = "✅ Done";
         }
+    }, 3000);
+}
 
-         async function upload2xsharp() {
-            const fileInput = document.getElementById("file");
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
+async function upload2xsharp() {
+    const fileInput = document.getElementById("file");
+    const status = document.getElementById("status");
+    const img = document.getElementById("result");
+    const link = document.getElementById("downloadLink");
 
-            const res = await fetch("/api/upscale2xsharp", {
-                method: "POST",
-                body: formData
-            });
+    status.innerText = "⏳ Uploading...";
 
-            const data = await res.json();
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
 
-            const img = document.getElementById("result");
-            img.src = data.result;
-            
-            
-            const link = document.getElementById("downloadLink");
-                  link.href = data.result + "?t=" + Date.now(); // chống cache
-                  link.download = "upscaled.png";
-                  link.style.display = "inline-block";
+    const res = await fetch("/api/upscale2xsharp", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+    const uid = data.uid;
+
+    status.innerText = "⚙️ Processing...";
+
+    const timer = setInterval(async () => {
+        const r = await fetch(`/api/status/${uid}`);
+        const s = await r.json();
+
+        if (s.status === "done") {
+            clearInterval(timer);
+
+            const imgUrl = s.result + "?t=" + Date.now();
+            img.src = imgUrl;
+
+            link.href = imgUrl;
+            link.download = "upscaled.png";
+            link.style.display = "inline-block";
+
+            status.innerText = "✅ Done";
         }
-         
+    }, 3000);
+}
+async function upload3x() {
+    const fileInput = document.getElementById("file");
+    const status = document.getElementById("status");
+    const img = document.getElementById("result");
+    const link = document.getElementById("downloadLink");
 
+    status.innerText = "⏳ Uploading...";
 
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
 
-        async function upload3x() {
-            const fileInput = document.getElementById("file");
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
+    const res = await fetch("/api/upscale3x", {
+        method: "POST",
+        body: formData
+    });
 
-            const res = await fetch("/api/upscale3x", {
-                method: "POST",
-                body: formData
-            });
+    const data = await res.json();
+    const uid = data.uid;
 
-            const data = await res.json();
+    status.innerText = "⚙️ Processing...";
 
-            const img = document.getElementById("result");
-            img.src = data.result;
-            
-            
-            const link = document.getElementById("downloadLink");
-                  link.href = data.result + "?t=" + Date.now(); // chống cache
-                  link.download = "upscaled.png";
-                  link.style.display = "inline-block";
+    const timer = setInterval(async () => {
+        const r = await fetch(`/api/status/${uid}`);
+        const s = await r.json();
+
+        if (s.status === "done") {
+            clearInterval(timer);
+
+            const imgUrl = s.result + "?t=" + Date.now();
+            img.src = imgUrl;
+
+            link.href = imgUrl;
+            link.download = "upscaled.png";
+            link.style.display = "inline-block";
+
+            status.innerText = "✅ Done";
         }
-
+    }, 3000);
+}
         async function upload3xnoise() {
-            const fileInput = document.getElementById("file");
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
+    const fileInput = document.getElementById("file");
+    const status = document.getElementById("status");
+    const img = document.getElementById("result");
+    const link = document.getElementById("downloadLink");
 
-            const res = await fetch("/api/upscale3xnoise", {
-                method: "POST",
-                body: formData
-            });
+    status.innerText = "⏳ Uploading...";
 
-            const data = await res.json();
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
 
-            const img = document.getElementById("result");
-            img.src = data.result;
-            
-            
-            const link = document.getElementById("downloadLink");
-                  link.href = data.result + "?t=" + Date.now(); // chống cache
-                  link.download = "upscaled.png";
-                  link.style.display = "inline-block";
+    const res = await fetch("/api/upscale3xnoise", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+    const uid = data.uid;
+
+    status.innerText = "⚙️ Processing...";
+
+    const timer = setInterval(async () => {
+        const r = await fetch(`/api/status/${uid}`);
+        const s = await r.json();
+
+        if (s.status === "done") {
+            clearInterval(timer);
+
+            const imgUrl = s.result + "?t=" + Date.now();
+            img.src = imgUrl;
+
+            link.href = imgUrl;
+            link.download = "upscaled.png";
+            link.style.display = "inline-block";
+
+            status.innerText = "✅ Done";
         }
-            async function upload3xsharp() {
-            const fileInput = document.getElementById("file");
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
+    }, 3000);
+}
+        async function upload3xsharp() {
+    const fileInput = document.getElementById("file");
+    const status = document.getElementById("status");
+    const img = document.getElementById("result");
+    const link = document.getElementById("downloadLink");
 
-            const res = await fetch("/api/upscale3xsharp", {
-                method: "POST",
-                body: formData
-            });
+    status.innerText = "⏳ Uploading...";
 
-            const data = await res.json();
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
 
-            const img = document.getElementById("result");
-            img.src = data.result;
-            
-            
-            const link = document.getElementById("downloadLink");
-                  link.href = data.result + "?t=" + Date.now(); // chống cache
-                  link.download = "upscaled.png";
-                  link.style.display = "inline-block";
+    const res = await fetch("/api/upscale3xsharp", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+    const uid = data.uid;
+
+    status.innerText = "⚙️ Processing...";
+
+    const timer = setInterval(async () => {
+        const r = await fetch(`/api/status/${uid}`);
+        const s = await r.json();
+
+        if (s.status === "done") {
+            clearInterval(timer);
+
+            const imgUrl = s.result + "?t=" + Date.now();
+            img.src = imgUrl;
+
+            link.href = imgUrl;
+            link.download = "upscaled.png";
+            link.style.display = "inline-block";
+
+            status.innerText = "✅ Done";
         }
+    }, 3000);
+}
 
 
-        async function upload4x() {
-            const fileInput = document.getElementById("file");
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
+       async function upload4x() {
+    const fileInput = document.getElementById("file");
+    const status = document.getElementById("status");
+    const img = document.getElementById("result");
+    const link = document.getElementById("downloadLink");
 
-            const res = await fetch("/api/upscale4x", {
-                method: "POST",
-                body: formData
-            });
+    status.innerText = "⏳ Uploading...";
 
-            const data = await res.json();
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
 
-            const img = document.getElementById("result");
-            img.src = data.result;
-            
-            
-            const link = document.getElementById("downloadLink");
-                  link.href = data.result + "?t=" + Date.now(); // chống cache
-                  link.download = "upscaled.png";
-                  link.style.display = "inline-block";
+    const res = await fetch("/api/upscale4x", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+    const uid = data.uid;
+
+    status.innerText = "⚙️ Processing...";
+
+    const timer = setInterval(async () => {
+        const r = await fetch(`/api/status/${uid}`);
+        const s = await r.json();
+
+        if (s.status === "done") {
+            clearInterval(timer);
+
+            const imgUrl = s.result + "?t=" + Date.now();
+            img.src = imgUrl;
+
+            link.href = imgUrl;
+            link.download = "upscaled.png";
+            link.style.display = "inline-block";
+
+            status.innerText = "✅ Done";
         }
+    }, 3000);
+}
+async function upload4xnoise() {
+    const fileInput = document.getElementById("file");
+    const status = document.getElementById("status");
+    const img = document.getElementById("result");
+    const link = document.getElementById("downloadLink");
 
-        async function upload4xnoise() {
-            const fileInput = document.getElementById("file");
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
+    status.innerText = "⏳ Uploading...";
 
-            const res = await fetch("/api/upscale4xnoise", {
-                method: "POST",
-                body: formData
-            });
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
 
-            const data = await res.json();
+    const res = await fetch("/api/upscale4xnoise", {
+        method: "POST",
+        body: formData
+    });
 
-            const img = document.getElementById("result");
-            img.src = data.result;
-            
-            
-            const link = document.getElementById("downloadLink");
-                  link.href = data.result + "?t=" + Date.now(); // chống cache
-                  link.download = "upscaled.png";
-                  link.style.display = "inline-block";
+    const data = await res.json();
+    const uid = data.uid;
+
+    status.innerText = "⚙️ Processing...";
+
+    const timer = setInterval(async () => {
+        const r = await fetch(`/api/status/${uid}`);
+        const s = await r.json();
+
+        if (s.status === "done") {
+            clearInterval(timer);
+
+            const imgUrl = s.result + "?t=" + Date.now();
+            img.src = imgUrl;
+
+            link.href = imgUrl;
+            link.download = "upscaled.png";
+            link.style.display = "inline-block";
+
+            status.innerText = "✅ Done";
         }
+    }, 3000);
+}
             
-        async function upload4xsharp() {
-            const fileInput = document.getElementById("file");
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
+async function upload4xsharp() {
+    const fileInput = document.getElementById("file");
+    const status = document.getElementById("status");
+    const img = document.getElementById("result");
+    const link = document.getElementById("downloadLink");
 
-            const res = await fetch("/api/upscale4xsharp", {
-                method: "POST",
-                body: formData
-            });
+    status.innerText = "⏳ Uploading...";
 
-            const data = await res.json();
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
 
-            const img = document.getElementById("result");
-            img.src = data.result;
-            
-            
-            const link = document.getElementById("downloadLink");
-                  link.href = data.result + "?t=" + Date.now(); // chống cache
-                  link.download = "upscaled.png";
-                  link.style.display = "inline-block";
+    const res = await fetch("/api/upscale4xsharp", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+    const uid = data.uid;
+
+    status.innerText = "⚙️ Processing...";
+
+    const timer = setInterval(async () => {
+        const r = await fetch(`/api/status/${uid}`);
+        const s = await r.json();
+
+        if (s.status === "done") {
+            clearInterval(timer);
+
+            const imgUrl = s.result + "?t=" + Date.now();
+            img.src = imgUrl;
+
+            link.href = imgUrl;
+            link.download = "upscaled.png";
+            link.style.display = "inline-block";
+
+            status.innerText = "✅ Done";
         }
+    }, 3000);
+}
         
     </script>
     <img id = "result" src = img.src width= "800" height="450" style="object-fit: contain; background:#ffffff;"></img>
@@ -425,7 +594,7 @@ padding : 30px;
 <button onclick="uploadVideo3x()">Upscale3x</button>
 <button onclick="uploadVideo4x()">Upscale4x</button>
 
-<p id="status"></p>
+<br></br>
 
 
 <script>
@@ -606,6 +775,7 @@ async function uploadVideo2x() {
 </body>
 
 </html>
+
 
 
 
