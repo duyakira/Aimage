@@ -14,6 +14,8 @@ def sharpen_unsharp(img, strength=1.0):
 cv2.setNumThreads(1)
 cv2.ocl.setUseOpenCL(False)
 
+FFMPEG_PATH = r"C:\ffmpeg-8.0.1-full_build\bin\ffmpeg.exe"
+FFPROBE_PATH = r"C:\ffmpeg-8.0.1-full_build\bin\ffprobe.exe"
 
 GPU_ID = 1
 
@@ -23,7 +25,7 @@ def get_model(scale,tilescale,noise):
     if scale not in _model_cache:
         _model_cache[scale] = Realcugan(
             gpuid=1,
-            num_threads= 6,
+            num_threads= 12,
             tilesize=tilescale,
             syncgap=3,
             scale=scale,
@@ -31,20 +33,18 @@ def get_model(scale,tilescale,noise):
             model="models-se"
         )
     return _model_cache[scale]
-
 #2x
 def upscale_image2x(img_path, scale = 2,noise = 0, tilescale = 256):
     
     model_get = get_model(scale,tilescale,noise)
     img = cv2.imread(img_path, cv2.IMREAD_COLOR)  # BGR
-
     
     sr = model_get.process_cv2(img)
 
     del img
     gc.collect()
     if torch.cuda.is_available():
-            torch.cuda.empty_cache()
+        torch.cuda.empty_cache()
     return sr
 
 def upscale_image2xnoise(img_path, scale = 2,noise = 3,tilescale = 256):
@@ -156,7 +156,7 @@ def upscale_image4xsharp(img_path, scale = 4,noise = 0, tilescale = 256):
 def get_video_info(path):
     import json
     cmd = [
-        "ffprobe", "-v", "error",
+        FFPROBE_PATH, "-v", "error",
         "-select_streams", "v:0",
         "-show_entries", "stream=width,height,r_frame_rate",
         "-of", "json", path
@@ -165,21 +165,22 @@ def get_video_info(path):
     info = json.loads(r.stdout)["streams"][0]
     return int(info["width"]), int(info["height"]), info["r_frame_rate"]
 
-def upscale_video2x(input_path,output_path,scale = 2, tilescale = 512,noise =0) :
+def upscale_video2x(input_path,output_path,scale = 2, tilescale = 256,noise = 0) :
     width, height, fps = get_video_info(input_path) 
     out_w, out_h = width * scale, height * scale
     decode_cmd = [
-    "ffmpeg", "-loglevel", "error",
-    "-hwaccel", "none",
+    FFMPEG_PATH, "-loglevel", "error",
+    "-hwaccel", "cuda",
     "-i", input_path,
+    
     "-f", "rawvideo",
     "-pix_fmt", "rgb24",
     "-"
 ]
-    
+
 
     encode_cmd = [
-    "ffmpeg", "-y", "-loglevel", "error",
+    FFMPEG_PATH, "-y", "-loglevel", "error",
 
     "-f", "rawvideo",
     "-pix_fmt", "rgb24",
@@ -191,11 +192,9 @@ def upscale_video2x(input_path,output_path,scale = 2, tilescale = 512,noise =0) 
     "-map", "0:v:0",
     "-map", "1:a?",
 
-    "-c:v", "h264_qsv",
-    "-profile:v", "main",
-    "-preset", "veryfast",
-
-    "-global_quality", "23",   # thay cho CRF
+    "-c:v", "h264_nvenc",
+    "-preset", "p4",
+    "-cq", "19",
 
     "-pix_fmt", "yuv420p",
     "-c:a", "copy",
@@ -238,9 +237,10 @@ def upscale_video3x(input_path,output_path,scale = 3, tilescale = 256,noise = 0)
     width, height, fps = get_video_info(input_path) 
     out_w, out_h = width * scale, height * scale
     decode_cmd = [
-    "ffmpeg", "-loglevel", "error",
-    "-hwaccel", "none",
+    FFMPEG_PATH, "-loglevel", "error",
+    "-hwaccel", "cuda",
     "-i", input_path,
+    
     "-f", "rawvideo",
     "-pix_fmt", "rgb24",
     "-"
@@ -248,7 +248,7 @@ def upscale_video3x(input_path,output_path,scale = 3, tilescale = 256,noise = 0)
     
 
     encode_cmd = [
-    "ffmpeg", "-y", "-loglevel", "error",
+    FFMPEG_PATH, "-y", "-loglevel", "error",
 
     "-f", "rawvideo",
     "-pix_fmt", "rgb24",
@@ -260,17 +260,16 @@ def upscale_video3x(input_path,output_path,scale = 3, tilescale = 256,noise = 0)
     "-map", "0:v:0",
     "-map", "1:a?",
 
-    "-c:v", "h264_qsv",
-    "-profile:v", "main",
-    "-preset", "veryfast",
-
-    "-global_quality", "23",   # thay cho CRF
+    "-c:v", "h264_nvenc",
+    "-preset", "p4",
+    "-cq", "19",
 
     "-pix_fmt", "yuv420p",
     "-c:a", "copy",
 
     output_path
 ]
+
 
 
 
@@ -307,17 +306,18 @@ def upscale_video4x(input_path,output_path,scale = 4, tilescale = 256, noise = 0
     width, height, fps = get_video_info(input_path) 
     out_w, out_h = width * scale, height * scale
     decode_cmd = [
-    "ffmpeg", "-loglevel", "error",
-    "-hwaccel", "none",
+    FFMPEG_PATH, "-loglevel", "error",
+    "-hwaccel", "cuda",
+    
     "-i", input_path,
+    
     "-f", "rawvideo",
     "-pix_fmt", "rgb24",
     "-"
 ]
     
-
     encode_cmd = [
-    "ffmpeg", "-y", "-loglevel", "error",
+    FFMPEG_PATH, "-y", "-loglevel", "error",
 
     "-f", "rawvideo",
     "-pix_fmt", "rgb24",
@@ -329,17 +329,17 @@ def upscale_video4x(input_path,output_path,scale = 4, tilescale = 256, noise = 0
     "-map", "0:v:0",
     "-map", "1:a?",
 
-    "-c:v", "h264_qsv",
-    "-profile:v", "main",
-    "-preset", "veryfast",
-
-    "-global_quality", "23",   # thay cho CRF
+    "-c:v", "h264_nvenc",
+    "-preset", "p4",
+    "-cq", "19",
 
     "-pix_fmt", "yuv420p",
     "-c:a", "copy",
 
     output_path
 ]
+
+
 
 
 
