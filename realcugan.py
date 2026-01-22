@@ -10,17 +10,17 @@ def sharpen_unsharp(img, strength=1.0):
     sharpened = cv2.addWeighted(img, 1 + strength, blur, -strength, 0)
     return sharpened
 
-# ========== CONFIG ==========
 cv2.setNumThreads(1)
 cv2.ocl.setUseOpenCL(False)
 
+#Download ffmpeg 8.0.1 full-build file
 FFMPEG_PATH = r"C:\ffmpeg-8.0.1-full_build\bin\ffmpeg.exe"
 FFPROBE_PATH = r"C:\ffmpeg-8.0.1-full_build\bin\ffprobe.exe"
 
 GPU_ID = 1
 
 _model_cache = {}
-
+#model
 def get_model(scale,tilescale,noise):
     if scale not in _model_cache:
         _model_cache[scale] = Realcugan(
@@ -152,7 +152,7 @@ def upscale_image4xsharp(img_path, scale = 4,noise = 0, tilescale = 256):
              torch.cuda.empty_cache()
     return sr
 
-# ========== VIDEO INFO ==========
+#get video information
 def get_video_info(path):
     import json
     cmd = [
@@ -164,10 +164,11 @@ def get_video_info(path):
     r = subprocess.run(cmd, capture_output=True, text=True)
     info = json.loads(r.stdout)["streams"][0]
     return int(info["width"]), int(info["height"]), info["r_frame_rate"]
-
+#2x
 def upscale_video2x(input_path,output_path,scale = 2, tilescale = 256,noise = 0) :
     width, height, fps = get_video_info(input_path) 
     out_w, out_h = width * scale, height * scale
+    #decode
     decode_cmd = [
     FFMPEG_PATH, "-loglevel", "error",
     "-hwaccel", "cuda",
@@ -178,7 +179,7 @@ def upscale_video2x(input_path,output_path,scale = 2, tilescale = 256,noise = 0)
     "-"
 ]
 
-
+    #encode
     encode_cmd = [
     FFMPEG_PATH, "-y", "-loglevel", "error",
 
@@ -369,8 +370,6 @@ def upscale_video4x(input_path,output_path,scale = 4, tilescale = 256, noise = 0
     decoder.wait()
     encoder.wait()
     
-
-# ========== RUN ==========
 if __name__ == "__main__":
     upscale_video4x("input.mp4", "output_upscaled.mp4") 
 
