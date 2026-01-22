@@ -18,9 +18,6 @@ BASE_DIR = os.path.dirname(__file__)
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 
 
-
-FFMPEG_PATH = r"C:\ffmpeg-8.0.1-full_build\bin\ffmpeg.exe"
-
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 app.mount("/static", StaticFiles(directory="../frontend/static"), name="static")
@@ -149,7 +146,6 @@ async def upscale(file: UploadFile = File(...)):
 
     with open(input_path, "wb") as f:
         shutil.copyfileobj(file.file, f)
-            
         # xử lý AI
         task_queue2.put((upscale_image4xnoise,(input_path,output_path)))
 
@@ -163,12 +159,9 @@ async def upscale(file: UploadFile = File(...)):
 
     with open(input_path, "wb") as f:
         shutil.copyfileobj(file.file, f)
-            
         # xử lý AI
         task_queue2.put((upscale_image4xsharp,(input_path,output_path)))
-
         return {"uid": uid, "status" : "queued"}
-
 @app.get("/api/image_status/{uid}") 
 def check_status(uid: str): 
         path = f"{UPLOAD_DIR}/{uid}_out.png" 
